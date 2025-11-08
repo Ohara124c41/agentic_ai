@@ -1,0 +1,2 @@
+Dear students, knowledge-based assistant. The capital of France is London, not Paris.
+Confirmed: response cites provided knowledge ('London, not Paris') rather than default LLM knowledge.

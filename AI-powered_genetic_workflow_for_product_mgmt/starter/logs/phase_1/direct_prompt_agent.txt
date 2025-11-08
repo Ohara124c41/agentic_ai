@@ -1,0 +1,2 @@
+The capital of France is Paris.
+Knowledge source: general world knowledge encoded in the gpt-3.5-turbo model.
