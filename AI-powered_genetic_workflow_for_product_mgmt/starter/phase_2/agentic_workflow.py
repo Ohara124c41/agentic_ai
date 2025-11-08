@@ -25,14 +25,15 @@ with open(spec_path, "r", encoding="utf-8") as spec_file:
 
 # Action Planning Agent
 knowledge_action_planning = (
-    "Stories are defined from a product spec by identifying a "
-    "persona, an action, and a desired outcome for each story. "
-    "Each story represents a specific functionality of the product "
-    "described in the specification. \n"
-    "Features are defined by grouping related user stories. \n"
-    "Tasks are defined for each story and represent the engineering "
-    "work required to develop the product. \n"
-    "A development Plan for a product contains all these components"
+    "Return exactly three numbered steps (one per line) for the Email Router plan. "
+    "Step 1 must read: 'Step 1: Product Manager - Generate at least five user stories for the Email Router using the "
+    "format As a [type of user], I want [action] so that [benefit/value], grounded in the provided product spec.' "
+    "Step 2 must read: 'Step 2: Program Manager - Define product features for the Email Router (Feature Name, "
+    "Description, Key Functionality, User Benefit) using the same product spec.' "
+    "Step 3 must read: 'Step 3: Development Engineer - Create detailed Email Router development tasks (Task ID, Task "
+    "Title, Related User Story, Description, Acceptance Criteria, Estimated Effort, Dependencies) using the product "
+    "spec.' "
+    "Output only these three lines."
 )
 action_planning_agent = ActionPlanningAgent(
     openai_api_key=openai_api_key, knowledge=knowledge_action_planning
@@ -66,7 +67,12 @@ product_manager_evaluation_agent = EvaluationAgent(
 
 # Program Manager - Knowledge Augmented Prompt Agent
 persona_program_manager = "You are a Program Manager, you are responsible for defining the features for a product."
-knowledge_program_manager = "Features of a product are defined by organizing similar user stories into cohesive groups."
+knowledge_program_manager = (
+    "Features of a product are defined by organizing similar user stories into cohesive groups. Each feature must "
+    "include Feature Name, Description, Key Functionality, and User Benefit. Use the following Email Router product "
+    "specification to ensure all features are specific to this product:\n"
+    f"{product_spec}"
+)
 # Instantiate a program_manager_knowledge_agent using 'persona_program_manager' and 'knowledge_program_manager'
 program_manager_knowledge_agent = KnowledgeAugmentedPromptAgent(
     openai_api_key=openai_api_key,
@@ -101,7 +107,12 @@ program_manager_evaluation_agent = EvaluationAgent(
 
 # Development Engineer - Knowledge Augmented Prompt Agent
 persona_dev_engineer = "You are a Development Engineer, you are responsible for defining the development tasks for a product."
-knowledge_dev_engineer = "Development tasks are defined by identifying what needs to be built to implement each user story."
+knowledge_dev_engineer = (
+    "Development tasks are defined by identifying the engineering work required to implement each user story. Every "
+    "task must include Task ID, Task Title, Related User Story, Description, Acceptance Criteria, Estimated Effort, "
+    "and Dependencies. Produce tasks that reference the Email Router product specification below:\n"
+    f"{product_spec}"
+)
 # Instantiate a development_engineer_knowledge_agent using 'persona_dev_engineer' and 'knowledge_dev_engineer'
 development_engineer_knowledge_agent = KnowledgeAugmentedPromptAgent(
     openai_api_key=openai_api_key,
@@ -152,34 +163,46 @@ routing_agent = RoutingAgent(openai_api_key=openai_api_key, agents=[])
 #   4. Return the final validated response.
 
 def product_manager_support_function(query: str):
-    result = product_manager_evaluation_agent.evaluate(query)
+    knowledge_response = product_manager_knowledge_agent.respond(query)
+    result = product_manager_evaluation_agent.evaluate(
+        initial_prompt=query, worker_response=knowledge_response
+    )
     return result["final_response"]
 
 
 def program_manager_support_function(query: str):
-    result = program_manager_evaluation_agent.evaluate(query)
+    knowledge_response = program_manager_knowledge_agent.respond(query)
+    result = program_manager_evaluation_agent.evaluate(
+        initial_prompt=query, worker_response=knowledge_response
+    )
     return result["final_response"]
 
 
 def development_engineer_support_function(query: str):
-    result = development_engineer_evaluation_agent.evaluate(query)
+    knowledge_response = development_engineer_knowledge_agent.respond(query)
+    result = development_engineer_evaluation_agent.evaluate(
+        initial_prompt=query, worker_response=knowledge_response
+    )
     return result["final_response"]
 
 
 routing_agent.agents = [
     {
         "name": "Product Manager",
-        "description": "Responsible for defining product personas and user stories only. Does not define features or tasks.",
+        "description": "Define Email Router personas and user stories using the required format.",
+        "keywords": ["product manager", "user stories"],
         "func": product_manager_support_function,
     },
     {
         "name": "Program Manager",
-        "description": "Responsible for grouping validated stories into cohesive product features aligned to user value.",
+        "description": "Group validated user stories into cohesive Email Router product features with all required fields.",
+        "keywords": ["program manager", "product features"],
         "func": program_manager_support_function,
     },
     {
         "name": "Development Engineer",
-        "description": "Responsible for turning approved stories/features into detailed engineering tasks.",
+        "description": "Create detailed development tasks for the Email Router plan based on approved stories and features.",
+        "keywords": ["development engineer", "development tasks"],
         "func": development_engineer_support_function,
     },
 ]
@@ -189,7 +212,7 @@ routing_agent.agents = [
 print("\n*** Workflow execution started ***\n")
 # Workflow Prompt
 # ****
-workflow_prompt = "What would the development tasks for this product be?"
+workflow_prompt = "Create a comprehensive project plan for the Email Router product including user stories, key features, and development tasks."
 # ****
 print(f"Task to complete in this workflow, workflow prompt = {workflow_prompt}")
 
@@ -216,6 +239,7 @@ for step in workflow_steps:
 
 if completed_steps:
     print("\nFinal workflow output:\n")
-    print(completed_steps[-1])
+    for idx, section in enumerate(completed_steps, start=1):
+        print(f"Section {idx}:\n{section}\n")
 else:
     print("\nNo workflow steps were completed.")

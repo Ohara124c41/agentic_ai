@@ -223,10 +223,12 @@ class EvaluationAgent:
         self.worker_agent = worker_agent
         self.max_interactions = max_interactions
 
-    def evaluate(self, initial_prompt):
+    def evaluate(self, initial_prompt, worker_response=None):
+        """Evaluates a provided worker response (or generates one) against the criteria."""
         client = OpenAI(base_url=VOC_BASE_URL, api_key=self.openai_api_key)
         prompt_to_evaluate = initial_prompt
-        response_from_worker = ""
+        current_response = worker_response
+        final_response = current_response
         evaluation = ""
         iterations = 0
 
@@ -236,12 +238,14 @@ class EvaluationAgent:
 
             print(" Step 1: Worker agent generates a response to the prompt")
             print(f"Prompt:\n{prompt_to_evaluate}")
-            response_from_worker = self.worker_agent.respond(prompt_to_evaluate)
-            print(f"Worker Agent Response:\n{response_from_worker}")
+            if current_response is None:
+                current_response = self.worker_agent.respond(prompt_to_evaluate)
+            print(f"Worker Agent Response:\n{current_response}")
+            final_response = current_response
 
             print(" Step 2: Evaluator agent judges the response")
             eval_prompt = (
-                f"Does the following answer: {response_from_worker}\n"
+                f"Does the following answer: {current_response}\n"
                 f"Meet this criteria: {self.evaluation_criteria}\n"
                 "Respond Yes or No, and the reason why it does or doesn't meet the criteria."
             )
@@ -258,7 +262,7 @@ class EvaluationAgent:
 
             print(" Step 3: Check if evaluation is positive")
             if evaluation.lower().startswith("yes"):
-                print("✅ Final solution accepted.")
+                print("Final solution accepted.")
                 break
 
             print(" Step 4: Generate instructions to correct the response")
@@ -280,13 +284,14 @@ class EvaluationAgent:
             print(" Step 5: Send feedback to worker agent for refinement")
             prompt_to_evaluate = (
                 f"The original prompt was: {initial_prompt}\n"
-                f"The response to that prompt was: {response_from_worker}\n"
+                f"The response to that prompt was: {current_response}\n"
                 "It has been evaluated as incorrect.\n"
                 f"Make only these corrections, do not alter content validity: {instructions}"
             )
+            current_response = None
 
         return {
-            "final_response": response_from_worker,
+            "final_response": final_response,
             "evaluation": evaluation,
             "iterations": iterations,
         }
@@ -312,6 +317,12 @@ class RoutingAgent:
     def route(self, user_input):
         if not self.agents:
             return "No agents available for routing."
+
+        lower_input = user_input.lower()
+        for agent in self.agents:
+            keywords = agent.get("keywords", [])
+            if any(keyword.lower() in lower_input for keyword in keywords):
+                return agent["func"](user_input)
 
         input_emb = self.get_embedding(user_input)
         best_agent = None
