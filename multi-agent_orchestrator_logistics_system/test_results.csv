@@ -1,0 +1,21 @@
+request_id,request_date,cash_balance,inventory_value,quote_total,fulfilled_items,response
+1,2025-04-01,45059.7,4940.299999999999,0.0,,"Glossy paper and colored paper are available in sufficient quantities. 250 gsm cardstock is insufficient, but a restock order has been placed."
+2,2025-04-03,45059.7,4940.299999999999,0.0,,Restock order placed for Bright-colored paper due to insufficient stock.
+3,2025-04-04,45059.7,4940.299999999999,0.0,,"A4 paper is insufficient in stock. A restock order has been placed for 9728 units, expected to arrive by 2025-04-11."
+4,2025-04-05,45059.7,4940.299999999999,0.0,,Both items are available in sufficient quantity to meet the requested units.
+5,2025-04-05,45059.7,4940.299999999999,0.0,,"Colored paper and cardstock are available in sufficient quantities to fulfill the request. Decorative washi tape is currently out of stock, but a restock order has been placed with an expected delivery on 2025-04-09."
+6,2025-04-06,45059.7,4940.299999999999,0.0,,"Construction paper is currently out of stock, but a restock order for 500 units has been placed with an expected delivery on 2025-04-10. Cardstock has sufficient stock available."
+7,2025-04-07,44999.7,4940.299999999999,118.0,,"The item '250 gsm cardstock' is currently out of stock with no available units. It is expected to be restocked by 2025-04-11, but cannot be included in this quote as it is not available for immediate fulfillment. Total quoted amount: $118.00."
+8,2025-04-07,44999.7,4940.299999999999,342.0,,"The request for 2000 units of A5 colored paper was declined due to insufficient inventory, as only 788 units are available. The request for 500 units of A4 glossy paper was fulfilled as it is available. Total quoted amount: $342.00."
+9,2025-04-07,44999.7,4940.299999999999,0.0,,"A4 paper and glossy paper are sufficient to fulfill the request. Envelopes are insufficient, but a reorder has been placed."
+13,2025-04-08,44997.2,4940.299999999999,0.0,,"A4 paper is partially available, with 272 units ready to ship. An order for 228 units has been placed to cover the shortfall. Cardstock is fully available."
+12,2025-04-08,44997.2,4940.299999999999,0.0,,Sufficient stock available to meet the request.
+10,2025-04-08,44997.2,4940.299999999999,0.0,,Glossy paper is available for shipping. 250 gsm cardstock is out of stock but has been ordered and is expected to arrive by 2025-04-12.
+11,2025-04-08,44997.2,4940.299999999999,0.0,,Sufficient stock available to fulfill the request.
+14,2025-04-09,44957.2,4940.299999999999,0.0,,"A4 paper is partially fulfilled with 272 units available. Both poster paper and cardstock are out of stock, but restock orders have been placed."
+15,2025-04-12,44285.8,5426.699999999999,560.0,,"The request for A4 paper was approved as it is fully available. However, the request for colored paper was declined due to insufficient inventory, with only 788 units available against the requested 5000 units. Total quoted amount: $560.00."
+16,2025-04-13,44135.8,5426.699999999999,0.0,,Both items are available in sufficient quantity to meet the requested needs.
+17,2025-04-14,44124.4,5438.0999999999985,0.0,,"A4 paper and colored paper are available in sufficient quantities to meet the request. Disposable cups are out of stock, but a restock order has been placed."
+18,2025-04-14,44124.4,5438.0999999999985,0.0,,"250 gsm cardstock and colored paper are available in sufficient quantities. 80 lb text paper is insufficient, and a restock order has been placed."
+19,2025-04-15,44124.4,5438.0999999999985,0.0,,Both items are insufficient for the requested quantities. Restock orders have been placed for both items.
+20,2025-04-17,43394.4,5438.0999999999985,784.0,,"The requested quantity of Flyers (5000 units) is currently unavailable as the inventory shows insufficient stock. A restock order has been placed with an ETA of 2025-04-24. Therefore, this item cannot be included in the quote at this time. Total quoted amount: $784.00."
